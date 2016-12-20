@@ -1,11 +1,11 @@
-import pymysql
+import pymssql
 
 class Database:
-    mysql_server='localhost'
-    mysql_user='root'
-    mysql_pwd=None
-    mysql_port=3306
-    mysql_db_name='mysql'
+    mysql_server='.'
+    mysql_user='sa'
+    mysql_pwd='password'
+    mysql_port=1433
+    mysql_db_name='test'
     db_connection=None
 
     logger=None
@@ -21,7 +21,7 @@ class Database:
         if self.datatables is None:
             conn = self.get_connection()
             cursor=conn.cursor()
-            sql='show tables;'
+            sql='select name from sys.tables;'
             cursor.execute(sql)
             rs=cursor.fetchall()
             self.datatables=[]
@@ -36,7 +36,7 @@ class Database:
 
     def get_connection(self):
         if self.db_connection is None:
-            self.db_connection=pymysql.connect(host=self.mysql_server,user=self.mysql_user,password=self.mysql_pwd,db=self.mysql_db_name)
+            self.db_connection=pymssql.connect(server=self.mysql_server,user=self.mysql_user,password=self.mysql_pwd,database=self.mysql_db_name)
         return self.db_connection
 
     def get_query_table(self,name,sql,*params):

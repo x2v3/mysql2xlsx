@@ -1,5 +1,5 @@
 from openpyxl import Workbook
-import pymysql
+import pymssql
 
 class Mysql2xls:
     database=None
