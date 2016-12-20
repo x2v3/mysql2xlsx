@@ -39,12 +39,17 @@ class Database:
             self.db_connection=pymysql.connect(host=self.mysql_server,user=self.mysql_user,password=self.mysql_pwd,db=self.mysql_db_name)
         return self.db_connection
 
-    def get_query_table(self,sql,*params):
+    def get_query_table(self,name,sql,*params):
         conn=self.get_connection()
         cursor=conn.cursor()
         cursor.execute(sql,params)
         cursor.close()
         table=Datatable()
+        table.name=name
+        table.query_sql=sql
+        table.query_params=params
+        table.database=self
+        return table
 
 
 class Datatable:
@@ -53,8 +58,9 @@ class Datatable:
     rows=None
     database=None
     query_sql=None
+    query_params=None
 
-    def __init__(self,name,query):
+    def __init__(self,name=None,query=None):
         if name is not None:
             self.name=name
         if query is not None:
@@ -62,12 +68,12 @@ class Datatable:
 
     def get_columns(self):        
         if self.columns is None:
-            self.query_table_info(sql)
+            self.query_table_info()
         return self.columns
 
     def get_rows(self):
         if self.rows is None:
-            self.query_table_info(sql)
+            self.query_table_info()
         return self.rows
 
     def query_table_info(self):
@@ -75,7 +81,7 @@ class Datatable:
         if self.query_sql is not None:
             sql=self.query_sql
         cursor=self.database.get_connection().cursor()
-        cursor.execute(sql)
+        cursor.execute(sql,self.query_params)
         rs=cursor.fetchall()
         self.columns=[c[0] for c in cursor.description]
         self.rows=rs
