@@ -20,7 +20,8 @@ class Mysql2xls:
         ws=self.workbook.create_sheet()
         t=datatable
         ws.title=t.name
-
+        
+        
         #fill worksheet
         columnIndex=1
         rowIndex=1
